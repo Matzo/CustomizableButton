@@ -13,29 +13,17 @@ class BorderedButton: CustomizableButton {
         super.setupConfiguration()
         
         self.conf.normal.shape = .Circle
-        self.conf.normal.titleColor = UIColor.blackColor()
-        self.conf.normal.backgroundColor = UIColor.lightGrayColor()
-        self.conf.normal.borderColor = UIColor.blueColor()
-        self.conf.normal.borderWidth = 2.0
+        self.conf.normal.titleColor = UIColor.whiteColor()
+        self.conf.normal.backgroundColor = UIColor(red: 0.29, green: 0.45, blue: 0.69, alpha: 1.0)
+        self.conf.normal.borderWidth = 1.0
+        self.conf.normal.borderColor = self.conf.normal.backgroundColor?.cb_darkenColor()
+        self.conf.normal.cornerRadius = 4.0
         
-        self.conf.selected.shape = .Circle
-        self.conf.selected.borderWidth = 1.0
-        self.conf.selected.backgroundColor = UIColor.greenColor()
+        self.conf.selectedDisabled.borderWidth = 0.0
+        self.conf.normal.image = UIColor.whiteColor().image(CGSizeMake(18.0, 18.0))
         
-        self.conf.highlited.borderWidth = 0.0
-        self.conf.highlited.backgroundColor = UIColor.redColor()
-        
-        self.conf.selectedHiglighted.borderWidth = 0.0
-        self.conf.selectedHiglighted.backgroundColor = UIColor.darkGrayColor()
-        
-        self.conf.normal.image = UIColor.yellowColor().image(CGSizeMake(28.0, 28.0))
-        self.conf.highlited.image = UIColor.yellowColor().darkenColor().image(CGSizeMake(28.0, 28.0))
-        self.conf.selected.image = UIColor(white: 0.5, alpha: 1.0).image(CGSizeMake(28.0, 28.0))
-        self.conf.selectedHiglighted.image = UIColor(white: 0.5, alpha: 1.0).lightenColor().image(CGSizeMake(28.0, 28.0))
-        
-        self.contentEdgeInsets.top = 10.0
-        self.contentEdgeInsets.bottom = 10.0
-        self.contentEdgeInsets.left = 10.0
-        self.contentEdgeInsets.right = 10.0
+        let padding:CGFloat = 10
+        self.contentEdgeInsets = UIEdgeInsetsMake(padding, padding, padding, padding)
     }
+    
 }

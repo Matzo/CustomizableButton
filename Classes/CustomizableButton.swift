@@ -41,7 +41,7 @@ class CustomizableButton: UIButton {
         self.setupConfiguration()
         self.setupByIBInspectable()
         self.customize()
-        self.customizeDynamic(UIControlState.Normal)
+        self.customizeDynamic(self.state)
     }
     
     /**
@@ -80,45 +80,166 @@ class CustomizableButton: UIButton {
                 self.setImage(image, forState: state)
             }
             
+            // background image
+            if let image = self.conf.forState(state).backgroundImage {
+                self.setBackgroundImage(image.cb_stretchableImage(), forState: state)
+            }
+            
         }
         
     }
     func customizeDynamic(state:UIControlState) {
+        if state == UIControlState.Disabled {
+            
+        }
         // background
-        if let backgroundColor = self.conf.forState(state).backgroundColor {
-            self.backgroundColor = backgroundColor
+        if let color = self.conf.forState(state).backgroundColor {
+            self.backgroundColor = color
+        } else {
+            if let base = self.defaultForState(state,
+                normal: self.conf.normal.backgroundColor,
+                highlighted: self.conf.highlighted.backgroundColor,
+                selected: self.conf.selected.backgroundColor,
+                selectedHighlited: self.conf.selectedHiglighted.backgroundColor) {
+                    self.backgroundColor = self.defaultEffectedColorForState(state, baseColor: base)
+            }
         }
         
         // border
         if let borderWidth = self.conf.forState(state).borderWidth {
             self.layer.borderWidth = borderWidth
+        } else {
+            if let base = self.defaultForState(state,
+                normal: self.conf.normal.borderWidth,
+                highlighted: self.conf.highlighted.borderWidth,
+                selected: self.conf.selected.borderWidth,
+                selectedHighlited: self.conf.selectedHiglighted.borderWidth) {
+                    self.layer.borderWidth = base
+            }
+        }
+        if let borderColor = self.conf.forState(state).borderColor {
+            self.layer.borderColor = borderColor.CGColor
+        } else {
+            if let base = self.defaultForState(state,
+                normal: self.conf.normal.borderColor,
+                highlighted: self.conf.highlighted.borderColor,
+                selected: self.conf.selected.borderColor,
+                selectedHighlited: self.conf.selectedHiglighted.borderColor) {
+                    self.layer.borderColor = self.defaultEffectedColorForState(state, baseColor: base).CGColor
+            }
         }
         
         // shape
-        if let shape = self.conf.forState(state).shape {
-            switch shape {
+        var shape = self.conf.forState(state).shape
+        if shape == nil {
+            shape = self.defaultForState(state,
+                normal: self.conf.normal.shape,
+                highlighted: self.conf.highlighted.shape,
+                selected: self.conf.selected.shape,
+                selectedHighlited: self.conf.selectedHiglighted.shape)
+        }
+        if shape != nil {
+            switch shape! {
             case .Circle:
                 self.layer.cornerRadius = min(self.frame.size.width, self.frame.size.height) * 0.5
             case .Round:
-                if let radius =  self.conf.forState(state).cornerRadius {
+                if let radius = self.conf.forState(state).cornerRadius ?? self.conf.normal.cornerRadius {
                     self.layer.cornerRadius = radius
+                } else {
+                    if let radius = self.defaultForState(state,
+                        normal: self.conf.normal.cornerRadius,
+                        highlighted: self.conf.highlighted.cornerRadius,
+                        selected: self.conf.selected.cornerRadius,
+                        selectedHighlited: self.conf.selectedHiglighted.cornerRadius) {
+                            self.layer.cornerRadius = radius
+                    }
                 }
-                return
             case .Rect:
-                return
+                self.layer.cornerRadius = 0.0
             }
+        }
+        
+        self.adjustImageTitleEdgeInsets()
+    }
+    
+    func adjustImageTitleEdgeInsets() {
+        // image and title margin
+        if let title = self.titleForState(state), image = self.imageForState(state) {
+            self.imageEdgeInsets.right = 1
+            self.imageEdgeInsets.left = -1
+            self.titleEdgeInsets.right = -3
+            self.titleEdgeInsets.left = 3
+        } else {
+            self.imageEdgeInsets.right = 0
+            self.imageEdgeInsets.left = 0
+            self.titleEdgeInsets.right = 0
+            self.titleEdgeInsets.left = 0
         }
     }
     
-    // MARK: - Utility Methods
-    private func highlightedColor(baseColor:UIColor) -> UIColor {
-        return baseColor.darkenColor()
+    func defaultForState<T>(state:UIControlState, normal:T?, highlighted:T?, selected:T?, selectedHighlited:T?) -> T? {
+        if state == UIControlState.Normal {
+            return nil
+        } else if state == UIControlState.Highlighted {
+            if normal != nil {
+                return normal
+            }
+        } else if state == UIControlState.Selected {
+            if normal != nil {
+                return normal
+            }
+        } else if state == UIControlState.Disabled {
+            if normal != nil {
+                return normal
+            }
+        } else if state == UIControlState.Selected | UIControlState.Highlighted {
+            if selected != nil {
+                return selected
+            } else if highlighted != nil {
+                return highlighted
+            } else if normal != nil {
+                return normal
+            }
+        } else if state == UIControlState.Selected | UIControlState.Disabled {
+            if selected != nil {
+                return selected
+            } else if normal != nil {
+                return normal
+            }
+        }
+        return nil
+    }
+    
+    // effected color
+    func defaultEffectedColorForState(state:UIControlState, baseColor:UIColor) -> UIColor {
+        if state == UIControlState.Highlighted {
+            return self.defaultHighlightedColor(baseColor)
+        } else if state == UIControlState.Selected {
+            return self.defaultSelectedColor(baseColor)
+        } else if state == UIControlState.Disabled {
+            return self.defaultDisabledColor(baseColor)
+        } else if state == UIControlState.Selected | UIControlState.Highlighted {
+            return self.defaultHighlightedColor(baseColor)
+        } else if state == UIControlState.Selected | UIControlState.Disabled {
+            return self.defaultDisabledColor(baseColor)
+        }
+        return baseColor
+    }
+    // MARK: - for override
+    func defaultHighlightedColor(baseColor:UIColor) -> UIColor {
+        return baseColor.cb_darkenColor()
+    }
+    func defaultSelectedColor(baseColor:UIColor) -> UIColor {
+        return baseColor.cb_lightenColor()
+    }
+    func defaultDisabledColor(baseColor:UIColor) -> UIColor {
+        return baseColor.cb_transparentedColor()
     }
 }
 
 struct Config {
     var normal: ButtonConfig = ButtonConfig()
-    var highlited: ButtonConfig = ButtonConfig()
+    var highlighted: ButtonConfig = ButtonConfig()
     var selected: ButtonConfig = ButtonConfig()
     var selectedHiglighted: ButtonConfig = ButtonConfig()
     var selectedDisabled: ButtonConfig = ButtonConfig()
@@ -127,7 +248,7 @@ struct Config {
         if state == UIControlState.Normal {
             return self.normal
         } else if state == UIControlState.Highlighted {
-            return self.highlited
+            return self.highlighted
         } else if state == UIControlState.Selected {
             return self.selected
         } else if state == UIControlState.Disabled {
@@ -154,13 +275,13 @@ class ButtonConfig {
     var image:UIImage?
     var imageSize:CGSize?
     var backgroundColor:UIColor?
+    var backgroundImage:UIImage?
     var localizableTitle:String?
     var titleColor:UIColor?
 }
 
-
 extension UIColor {
-    func image() -> UIImage {
+    func cb_image() -> UIImage {
         return self.image(CGSizeMake(1.0, 1.0))
     }
     func image(size:CGSize) -> UIImage {
@@ -174,28 +295,42 @@ extension UIColor {
         return image
     }
     
-    func colorChangedBrightness(ratio:CGFloat) -> UIColor {
+    func cb_adjustedColor(hue hRatio:CGFloat = 1.0, saturation sRatio:CGFloat = 1.0, brightness bRatio:CGFloat = 1.0, alpha aRatio:CGFloat = 1.0) -> UIColor {
         var hue:CGFloat  = 0;
         var saturation:CGFloat = 0;
         var brightness:CGFloat = 0;
         var alpha:CGFloat = 0;
         
         if self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) {
-            brightness += (ratio-1.0);
+            hue += (hRatio-1.0);
+            hue = max(min(hue, 1.0), 0.0);
+            saturation += (sRatio-1.0);
+            saturation = max(min(saturation, 1.0), 0.0);
+            brightness += (bRatio-1.0);
             brightness = max(min(brightness, 1.0), 0.0);
-            return UIColor(hue: hue, saturation: saturation, brightness: (brightness * ratio), alpha: alpha)
+            alpha += (aRatio-1.0);
+            alpha = max(min(alpha, 1.0), 0.0);
+            return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: alpha)
         }
         return self
+    
     }
-    func darkenColor() -> UIColor {
-        return self.colorChangedBrightness(0.8)
+
+    func cb_darkenColor() -> UIColor {
+        return self.cb_adjustedColor(brightness: 0.9)
     }
-    func lightenColor() -> UIColor {
-        return self.colorChangedBrightness(1.2)
+    func cb_lightenColor() -> UIColor {
+        return self.cb_adjustedColor(brightness: 1.3)
+    }
+    func cb_transparentedColor() -> UIColor {
+        return self.cb_adjustedColor(alpha: 0.2)
     }
 }
+
 extension UIImage {
-    func stretchableImage() -> UIImage {
-        return self
+    func cb_stretchableImage() -> UIImage {
+        var halfWidth:CGFloat = floor(self.size.width * 0.5)
+        var halfHeight:CGFloat = floor(self.size.height * 0.5)
+        return self.resizableImageWithCapInsets(UIEdgeInsetsMake(halfHeight, halfWidth, halfHeight, halfWidth), resizingMode:UIImageResizingMode.Stretch)
     }
 }

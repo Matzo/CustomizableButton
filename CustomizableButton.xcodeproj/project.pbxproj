@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F75DC8B81AE379D600D27A12 /* SampleButtonBG.png in Resources */ = {isa = PBXBuildFile; fileRef = F75DC8B71AE379D600D27A12 /* SampleButtonBG.png */; };
 		F79585951AE015F1009967FC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79585941AE015F1009967FC /* AppDelegate.swift */; };
 		F79585971AE015F1009967FC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79585961AE015F1009967FC /* ViewController.swift */; };
 		F795859A1AE015F1009967FC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F79585981AE015F1009967FC /* Main.storyboard */; };
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F75DC8B71AE379D600D27A12 /* SampleButtonBG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SampleButtonBG.png; sourceTree = "<group>"; };
 		F795858F1AE015F1009967FC /* CustomizableButton.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CustomizableButton.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F79585931AE015F1009967FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F79585941AE015F1009967FC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -62,6 +64,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F75DC8B61AE379D600D27A12 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F75DC8B71AE379D600D27A12 /* SampleButtonBG.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		F79585861AE015F1009967FC = {
 			isa = PBXGroup;
 			children = (
@@ -84,6 +94,7 @@
 		F79585911AE015F1009967FC /* CustomizableButton */ = {
 			isa = PBXGroup;
 			children = (
+				F75DC8B61AE379D600D27A12 /* Resources */,
 				F79585B91AE0344E009967FC /* Buttons */,
 				F79585941AE015F1009967FC /* AppDelegate.swift */,
 				F79585961AE015F1009967FC /* ViewController.swift */,
@@ -217,6 +228,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F75DC8B81AE379D600D27A12 /* SampleButtonBG.png in Resources */,
 				F795859A1AE015F1009967FC /* Main.storyboard in Resources */,
 				F795859F1AE015F1009967FC /* LaunchScreen.xib in Resources */,
 				F795859C1AE015F1009967FC /* Images.xcassets in Resources */,

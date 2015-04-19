@@ -15,11 +15,9 @@ class IconButton: CustomizableButton {
         self.conf.normal.titleColor = UIColor.blackColor()
         
         self.conf.normal.image = UIColor.purpleColor().image(CGSizeMake(28.0, 28.0))
-        self.conf.highlited.image = UIColor.yellowColor().image(CGSizeMake(28.0, 28.0))
+        self.conf.highlighted.image = UIColor.yellowColor().image(CGSizeMake(28.0, 28.0))
         
-        self.contentEdgeInsets.top = 10.0
-        self.contentEdgeInsets.bottom = 10.0
-        self.contentEdgeInsets.left = 10.0
-        self.contentEdgeInsets.right = 10.0
+        let padding:CGFloat = 10
+        self.contentEdgeInsets = UIEdgeInsetsMake(padding, padding, padding, padding)
     }
 }
